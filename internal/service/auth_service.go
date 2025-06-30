@@ -13,12 +13,12 @@ import (
 func (s *AuthService) Login(req request.LoginRequest) (string, error) {
 	user, err := s.UserRepo.FindByEmailOrPhoneLogin(req.EmailOrPhone)
 	if err != nil {
-		return "", errors.New("Invalid Credentials")
+		return "", errors.New("invalid credentials")
 	}
 
 	// Compare Password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		return "", errors.New("Invalid Credentials")
+		return "", errors.New("invalid credentials")
 	}
 
 	// Generate Token
@@ -39,10 +39,10 @@ func NewAuthService(userRepo *repository.UserRepository, storeRepo *repository.S
 	return &AuthService{UserRepo: userRepo, StoreRepo: storeRepo}
 }
 
-func (s *AuthService) Register(req request.RegisterRequest) error {
+func (s *AuthService) Register(req request.RegisterRequest) (*domain.User, error) { // Fungsi services untuk Register
 	// Cek email / phone
 	if existing, _ := s.UserRepo.FindByEmailOrPhone(req.Email, req.Phone); existing != nil {
-		return errors.New("email or phone already used")
+		return nil, errors.New("email atau nomor telepon telah digunakan")
 	}
 
 	// Hash password
@@ -53,10 +53,11 @@ func (s *AuthService) Register(req request.RegisterRequest) error {
 		Email:    req.Email,
 		Phone:    req.Phone,
 		Password: hashedPass,
+		Role:     "user", // default role
 	}
 
 	if err := s.UserRepo.Create(&user); err != nil {
-		return err
+		return nil, err
 	}
 
 	// Auto-create store
@@ -64,5 +65,10 @@ func (s *AuthService) Register(req request.RegisterRequest) error {
 		Name:   user.Name + "'s Store",
 		UserID: user.ID,
 	}
-	return s.StoreRepo.Create(&store)
+
+	if err := s.StoreRepo.Create(&store); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

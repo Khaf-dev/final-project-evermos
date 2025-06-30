@@ -1,47 +1,44 @@
 package service
 
 import (
+	"final-project/dto/request"
 	"final-project/internal/domain"
 	"final-project/internal/repository"
 )
 
-type CategoryService interface {
-	Create(name string) error
-	GetAll() ([]domain.Category, error)
-	Update(id uint, name string) error
-	Delete(id uint) error
+type CategoryService struct {
+	repo *repository.CategoryRepository
 }
 
-type categoryService struct {
-	repo repository.CategoryRepository
+func NewCategoryService(r *repository.CategoryRepository) *CategoryService {
+	return &CategoryService{repo: r}
 }
 
-func NewCategoryService(repo repository.CategoryRepository) CategoryService {
-	return &categoryService{repo}
+func (s *CategoryService) Create(input request.CreateCategoryRequest) error {
+	category := domain.Category{
+		Name: input.Name,
+	}
+	return s.repo.Create(&category)
 }
 
-func (s *categoryService) Create(name string) error {
-	category := &domain.Category{Name: name}
-	return s.repo.Create(category)
-}
-
-func (s *categoryService) GetAll() ([]domain.Category, error) {
+func (s *CategoryService) GetAll() ([]domain.Category, error) {
 	return s.repo.FindAll()
 }
 
-func (s *categoryService) Update(id uint, name string) error {
-	cat, err := s.repo.FindByID(id)
+func (s *CategoryService) Update(id uint, input request.UpdateCategoryRequest) error {
+	category, err := s.repo.FindByID(id)
 	if err != nil {
 		return err
 	}
-	cat.Name = name
-	return s.repo.Update(cat)
+	category.Name = input.Name
+	return s.repo.Update(category)
 }
 
-func (s *categoryService) Delete(id uint) error {
-	cat, err := s.repo.FindByID(id)
+func (s *CategoryService) Delete(id uint) error {
+	category, err := s.repo.FindByID(id)
 	if err != nil {
 		return err
 	}
-	return s.repo.Delete(cat)
+
+	return s.repo.Delete(category)
 }

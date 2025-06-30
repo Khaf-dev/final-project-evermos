@@ -7,13 +7,30 @@ import (
 )
 
 type StoreRepository struct {
-	DB *gorm.DB
+	db *gorm.DB
 }
 
 func NewStoreRepository(db *gorm.DB) *StoreRepository {
-	return &StoreRepository{DB: db}
+	return &StoreRepository{db: db}
 }
 
 func (r *StoreRepository) Create(store *domain.Store) error {
-	return r.DB.Create(store).Error
+	return r.db.Create(store).Error
+}
+
+func (r *StoreRepository) FindByUserID(userID uint) (*domain.Store, error) {
+	var store domain.Store
+	if err := r.db.Where("user_id = ?", userID).First(&store).Error; err != nil {
+		return nil, err
+	}
+	return &store, nil
+}
+
+func (r *StoreRepository) FindByID(id uint) (*domain.Store, error) {
+	var store domain.Store
+	err := r.db.First(&store, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &store, nil
 }

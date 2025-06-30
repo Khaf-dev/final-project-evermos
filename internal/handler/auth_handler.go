@@ -3,8 +3,8 @@ package handler
 import (
 	"final-project/dto/request"
 	"final-project/internal/service"
+	"final-project/pkg/utils"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -16,19 +16,37 @@ func NewAuthHandler(s *service.AuthService) *AuthHandler {
 	return &AuthHandler{Service: s}
 }
 
-var validate = validator.New()
-
-func (h *AuthHandler) Register(c *fiber.Ctx) error {
+func (h *AuthHandler) Register(c *fiber.Ctx) error { // Fungsi Registrasi Akun
 	var input request.RegisterRequest
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid Input"})
+		return c.Status(400).JSON(fiber.Map{
+			"error":  "Invalid Input",
+			"debug":  err.Error(),
+			"detail": err.Error()})
 	}
 
-	if err := validate.Struct(&input); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	if err := utils.Validator.Struct(&input); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "Validation failed",
+			"debug": err.Error()})
 	}
 
-	return c.Status(201).JSON(fiber.Map{"message": "Registrasi akun berhasil"})
+	user, err := h.Service.Register(input)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(201).JSON(fiber.Map{
+		"message": "Registrasi akun berhasil",
+		"user": fiber.Map{
+			"id":    user.ID,
+			"name":  user.Name,
+			"email": user.Email,
+			"phone": user.Phone,
+			"role":  user.Role,
+		},
+	})
+
 }
 
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
@@ -37,7 +55,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid Input"})
 	}
 
-	if err := validate.Struct(&input); err != nil {
+	if err := utils.Validator.Struct(&input); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
