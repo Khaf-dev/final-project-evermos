@@ -199,7 +199,7 @@ JWT_SECRET=your_jwt_secret
 
 ## 🧪 Postman Collection
 
-Gunakan [Postman Collection Evermos](https://github.com/rakamin-evermos/backend-test) sebagai acuan pengujian API. Import collection ke Postman dan sesuaikan URL dan token.
+Gunakan [Postman Collection Evermos](https://github.com/Fajar-Islami/go-example-cruid/blob/master/Rakamin%20Evermos%20Virtual%20Internship.postman_collection.json) sebagai acuan pengujian API. Import collection ke Postman dan sesuaikan URL dan token.
 
 ---
 
