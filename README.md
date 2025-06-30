@@ -62,7 +62,7 @@ Middleware `JWTProtected` akan menyimpan ke dalam context:
 ### 🔐 Register
 
 ```
-POST /api/v1/auth/register
+POST /api/v1/register
 ```
 
 ```json
@@ -76,7 +76,7 @@ POST /api/v1/auth/register
 ### 🔐 Login
 
 ```
-POST /api/v1/auth/login
+POST /api/v1/login
 ```
 
 ```json
@@ -127,7 +127,7 @@ POST /api/v1/transactions
 ### 🏠 Tambah Alamat
 
 ```
-POST /api/v1/addresses
+POST /api/v1/address
 ```
 
 ```json
@@ -169,15 +169,15 @@ POST /api/v1/categories
 
 | Method | Endpoint              | Deskripsi                              |
 | ------ | --------------------- | -------------------------------------- |
-| POST   | `/auth/register`      | Register user baru                     |
-| POST   | `/auth/login`         | Login dan ambil JWT                    |
+| POST   | `/register`           | Register user baru                     |
+| POST   | `/login`              | Login dan ambil JWT                    |
 | GET    | `/products`           | Lihat semua produk                     |
 | POST   | `/products`           | Tambah produk (hanya seller)           |
 | POST   | `/transactions`       | Buat transaksi baru                    |
 | GET    | `/transactions/store` | Lihat transaksi ke toko (hanya seller) |
 | GET    | `/logs/products`      | Lihat histori log produk               |
 | GET    | `/admin/users`        | Lihat semua user (admin)               |
-| POST   | `/addresses`          | Tambah alamat pengiriman               |
+| POST   | `/address`            | Tambah alamat pengiriman               |
 | GET    | `/provinces`          | Ambil daftar provinsi dari EMSIFA      |
 
 ---
